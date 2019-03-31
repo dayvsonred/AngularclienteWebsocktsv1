@@ -32,7 +32,14 @@ export class MyNewComponentComponent implements OnInit {
 
   constructor() {
 
-    this.socket$ = new WebSocketSubject('ws://localhost:8088');
+    //this.socket$ = new WebSocketSubject('ws://localhost:8088');
+
+    // this.socket$ = new WebSocketSubject('ws://localhost:8080/api/Publicador/Assinar');
+
+    this.socket$ = new WebSocketSubject('ws://localhost:52080/api/SokestCon/Conect');
+
+
+    
 
     this.socket$
         .subscribe(
@@ -65,7 +72,7 @@ export class MyNewComponentComponent implements OnInit {
       this.socket$.next(this.clientMessage);
     }
     this.serverMessages.push(message);
-    this.socket$.next(message);
+    this.socket$.next("dayvson");
     this.clientMessage = '';
  
   }
