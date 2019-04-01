@@ -9,6 +9,8 @@ const routes: Routes = [
   { path: 'A', pathMatch: 'full', component: MyNewComponentComponent  },
   { path: 'Chat', pathMatch: 'full', component: MyChatComponent  },
   { path: 'chat', pathMatch: 'full', component: MyChatComponent  },
+  { path: '', pathMatch: 'full', component: MyChatComponent  },
+  { path: '**', pathMatch: 'full', component: MyChatComponent  },
 
 ];
 
