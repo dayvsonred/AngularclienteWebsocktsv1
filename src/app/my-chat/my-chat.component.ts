@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { webSocket } from 'rxjs/webSocket';  
 import { SERVER_TRANSITION_PROVIDERS } from '@angular/platform-browser/src/browser/server-transition';
 
@@ -10,6 +10,7 @@ import { SERVER_TRANSITION_PROVIDERS } from '@angular/platform-browser/src/brows
 })
 export class MyChatComponent implements OnInit {
 
+  @ViewChild('msgListDiv') private myScrollContainer: ElementRef;
   
   private websocket : WebSocket;
 
@@ -31,6 +32,7 @@ export class MyChatComponent implements OnInit {
   constructor() {
 
     let wsUri = "ws://localhost:52080/api/SokestCon/Conect";
+    // let wsUri = "ws://chatwebdayvson.azurewebsites.net/api/SokestCon/Conect";
     this.websocket = new WebSocket(wsUri);
     this.websocket.onopen = (evt) => { this.onOpen(evt) };
     this.websocket.onclose = (evt) => { this.onClose(evt) };
@@ -138,18 +140,41 @@ export class MyChatComponent implements OnInit {
       console.log(MSGServ);
       console.log("===========================");
  
-      if(MSGServ.USER == "SERVER"   ){
+
+      if(typeof MSGServ.USER == 'undefined'){
+        return true;
+      }
+ 
+ 
+      if(MSGServ.USER == "SERVER"  ){
+
+        if(MSGServ.CONFIG &&  MSGServ.CONFIG == 'STATUS'  ){
+          console.log("estatus on");
+          return true;
+
+        }
+
+        
  
         let USERADD = {
           IMG : this.IMGDispon[MSGServ.IMG],
           NOME :  MSGServ.NOME,
         } 
     
-        if(this.Nome == MSGServ.NOME){
+        if(this.Nome == MSGServ.NOME && this.USER.status == 'off-online'){
           this.IniChatConfig(MSGServ.IMG);
         }
 
-        this.ListaUsuarios.push(USERADD);
+        let UserOnExiste = [];
+        
+        for (let index = 0; index < this.ListaUsuarios.length; index++) {
+          const element = this.ListaUsuarios[index];
+          UserOnExiste.push(element.NOME);
+        }
+
+        if(UserOnExiste.indexOf(USERADD.NOME) == -1){
+          this.ListaUsuarios.push(USERADD);
+        }
 
         this.ListaUsuariosIMGs = [];
         this.ListaUsuarios.forEach(element => {
@@ -184,6 +209,9 @@ export class MyChatComponent implements OnInit {
 
     }
 
+
+  
+    this.scrolDown();
 
     //this.websocket.close(); //** para fechar web sokest  */
   }
@@ -226,11 +254,25 @@ export class MyChatComponent implements OnInit {
     
     
     this.InptMessage = '';
+
+
   }
   
   writeToScreen(M){
     console.log(M)
   }
 
+
+  scrolDown(){
+    //var objDiv = document.querySelector("#msgListDiv");
+    // console.log(objDiv.scrollHeight);
+    //let numMsg = this.ListaMenssages.length;
+    //objDiv.scrollTop = objDiv.scrollHeight +( parseInt(numMsg) *100);
+
+    try {
+      console.log(this.myScrollContainer.nativeElement.scrollHeight);
+      this.myScrollContainer.nativeElement.scrollTop = this.myScrollContainer.nativeElement.scrollHeight;
+    } catch(err) { }   
+  }
 
 }
